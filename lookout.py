@@ -27,6 +27,7 @@ class Lookout():
         self._smtpServer = "smtp.gmail.com"
         self._smtpServerPort = 587
         self._server = None
+        self._sererClosed = True
         self._driverOptions = None
         self._driver = None
         self.driverAddress = None
@@ -75,6 +76,7 @@ class Lookout():
             self._server = smtplib.SMTP(self._smtpServer, self._smtpServerPort)
             self._server.starttls()
             self._server.login(self.email, self.emailPassword)
+            self._serverClosed = False
         except Exception as error: return error
         else:
             print(BLUE + "SMTP SERVER >" + RESET + " Initialization successfull")
@@ -83,8 +85,11 @@ class Lookout():
     def QuitSMTPServer(self):
         """Quits the SMTP server"""
 
-        print(BLUE + "SMTP SERVER >" + RESET + " Quitting")
-        self._server.quit()
+        if not self._serverClosed:
+            print(BLUE + "SMTP SERVER >" + RESET + " Quitting")
+            self._server.quit()
+            self._serverClosed = True
+        else: print(BLUE + "SMTP SERVER >" + RESET + " Already closed")
 
     def SendUpdate(self):
         """Sends the defined message
